@@ -7,7 +7,7 @@ on:
 
 jobs:
   train:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
@@ -28,7 +28,7 @@ jobs:
 
   test:
     needs: train
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
@@ -48,7 +48,7 @@ jobs:
 
   build:
     needs: [train, test]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
@@ -73,7 +73,7 @@ jobs:
 
   push-image:
     needs: [train, test, build]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - name: Repo Checkout
       uses: actions/checkout@v2
@@ -91,14 +91,13 @@ jobs:
 
     - name: Build the Docker image for Fastapi app
       env:
-        DOCKER_USER: ${{ secrets.DOCKER_USER_NAME}}
-      run: docker build . -f Dockerfile -t $DOCKER_USER/bike_sharing_api-fastapi:latest
+        DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
+      run: docker build . -f Dockerfile -t $DOCKER_USER/bikeshare-fastapi:latest
 
     - name: Push the Docker Image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
-      run: docker push $DOCKER_USER/bike_sharing_api-fastapi
+      run: docker push $DOCKER_USER/bikeshare-fastapi
 
     - name: Logout to Docker hub
       run: docker logout
-
